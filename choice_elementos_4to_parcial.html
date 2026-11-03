@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choice – Elementos 4.º parcial</title>
+<style>
+:root{color-scheme:light;--ink:#20242b;--muted:#68717d;--line:#e3e7ec;--bg:#f4f6f8;--accent:#286caa;--good:#18794e;--bad:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:850px;margin:32px auto;padding:0 16px 48px}.hero,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:16px}
+h1{font-size:1.65rem;margin:0 0 8px}h2{font-size:1.15rem;margin:0 0 14px}.sub{color:var(--muted);margin:0}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 10px}
+.progress{height:8px;background:#e9edf2;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:var(--accent);transition:width .2s}
+.question{padding:18px 0;border-bottom:1px solid var(--line)}.question:last-child{border-bottom:0}
+.qtitle{font-weight:650;margin:0 0 12px}.option{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:10px;margin:7px 0;cursor:pointer}
+.option:hover{background:#f7f9fb}.option input{margin-top:5px;accent-color:var(--accent)}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:650;font-size:15px;cursor:pointer;background:var(--accent);color:white}
+button.secondary{background:#edf1f5;color:var(--ink)}button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.feedback{font-size:.9rem;margin-top:8px;font-weight:650}.correct{color:var(--good)}.wrong{color:var(--bad)}
+.result{display:none;margin-top:18px;padding:18px;border-radius:12px;background:#f0f7f3;border:1px solid #cce7d7}
+.result h2{font-size:1.4rem;margin-bottom:4px}.small{font-size:.9rem;color:var(--muted)}
+@media(max-width:520px){main{margin:14px auto}.hero,.panel{padding:16px}h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+<h1>Choice – Elementos 4.º parcial</h1>
+<p class="sub">50 preguntas · 4 opciones · una sola respuesta correcta.</p>
+<p class="sub">Temas: suturas mecánicas, anatomía patológica, bacteriología, anestesia, laparoscopía, heridas, vendajes y curaciones.</p>
+<div class="top"><strong id="counter">0/50 respondidas</strong><span class="small" id="blockLabel">Bloque 1 de 5</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+</section>
+<section class="panel">
+<div class="top"><h2 id="blockTitle">Preguntas 1–10</h2><span class="small">Resolvé sin mirar el resumen 😉</span></div>
+<form id="quiz"></form>
+<div class="actions">
+<button class="secondary" id="prev" type="button" disabled>← Anterior</button>
+<button id="next" type="button">Siguiente bloque →</button>
+<button id="submit" type="button" style="display:none" disabled>Corregir examen</button>
+</div>
+<div class="result" id="result" aria-live="polite"></div>
+</section>
+</main>
+<script>
+const questions = [["¿Cuál es el principal material de las grapas utilizadas en las suturas mecánicas?", ["Acero inoxidable", "Titanio", "Polipropileno", "Nylon"], 1], ["¿Cuál de los siguientes NO es un objetivo de las suturas mecánicas?", ["Lograr hemostasia eficaz", "Reducir la morbilidad", "Aumentar el tiempo quirúrgico", "Restaurar el funcionamiento de los órganos"], 2], ["¿Qué característica tiene la engrapadora lineal tipo TA?", ["Es cortante", "Es solamente engrapadora, no cortante", "Se utiliza exclusivamente en laparoscopía", "Realiza anastomosis término-terminales"], 1], ["¿Qué tipo de tejido se asocia con las grapas blancas?", ["Tejido grueso", "Tejido intermedio", "Tejido vascular", "Tejido muscular"], 2], ["¿Qué engrapadora lineal tiene función cortante?", ["TA", "CEEA", "GIA", "Contour"], 2], ["¿Cuál es la función de las EndoGIA?", ["Realizar suturas mecánicas en cirugía laparoscópica", "Realizar anastomosis término-terminales abiertas", "Suturar exclusivamente tejido vascular", "Sellar heridas cutáneas"], 0], ["¿Para qué se utiliza principalmente la engrapadora circular CEEA?", ["Anastomosis latero-laterales", "Anastomosis término-terminales", "Sellado de bronquios", "Sutura de piel"], 1], ["¿Qué característica presenta la engrapadora Contour?", ["Gira 360°", "Es exclusivamente laparoscópica", "Tiene una concavidad en la parte de las grapas", "No utiliza grapas"], 2], ["¿Qué estudia la anatomía patológica?", ["Solamente bacterias", "Las células en tejidos u órganos", "Virus y parásitos exclusivamente", "La sensibilidad nerviosa"], 1], ["¿Cómo se clasifica la toma de muestra para anatomía patológica?", ["Método estéril", "Método no estéril", "Método aséptico obligatorio", "Método contaminado"], 1], ["¿Cuánto demora aproximadamente una biopsia diferida?", ["Entre 1 y 2 horas", "Entre 24 y 48 horas", "Entre 10 y 15 días", "Entre 30 y 45 días"], 2], ["¿Qué fijador se utiliza en una biopsia diferida?", ["Solución fisiológica", "Alcohol al 70%", "Formol al 10% o formol Baxter", "Heparina"], 2], ["¿A qué temperatura debe conservarse una muestra de biopsia diferida según el resumen?", ["Congelada", "Temperatura ambiente", "En la puerta de la heladera", "A 4 °C obligatoriamente"], 1], ["¿Qué sucede con una muestra obtenida por congelación?", ["Se descarta luego del resultado", "Se envía posteriormente a biopsia diferida", "Se coloca siempre en formol al 10% antes del estudio", "Se conserva en solución fisiológica durante 15 días"], 1], ["¿Cómo se recibe inicialmente una pieza para biopsia por congelación?", ["En una gasa grande", "En un recipiente estéril con heparina", "En una bolsa roja obligatoriamente", "En una jeringa"], 0], ["¿Qué estudia la bacteriología?", ["Solamente bacterias", "Virus, bacterias, hongos y parásitos", "Células y órganos", "Únicamente hongos y parásitos"], 1], ["¿Qué método se utiliza para la toma y preparación de muestras bacteriológicas?", ["No estéril", "Estéril", "Contaminado", "No requiere preparación"], 1], ["¿En qué tipo de recipiente se puede recepcionar una muestra bacteriológica?", ["Bolsa común", "Frasco estéril, tubo de ensayo o bolsa estéril", "Recipiente con formol", "Bolsa roja no estéril"], 1], ["¿Para qué se utiliza solución fisiológica en una muestra bacteriológica?", ["Para fijar las células", "Para evitar que la muestra se adhiera al recipiente", "Para conservarla durante meses", "Para coagular la sangre"], 1], ["¿Qué función cumple la heparina en algunas muestras de sangre?", ["Conservante", "Fijador", "Anticoagulante", "Antiséptico"], 2], ["¿En qué lugar debe conservarse la muestra bacteriológica según el resumen?", ["En el freezer", "En la puerta de la heladera", "A temperatura ambiente", "En una estufa"], 1], ["¿Cuáles son las tres categorías principales de anestesia?", ["Infiltrativa, tópica y general", "Local, regional y general", "Local, epidural y raquídea", "General, intravenosa y tópica"], 1], ["¿Cuál de estos factores influye en la elección del tipo de anestesia?", ["Solamente la edad", "El tipo y duración de la intervención", "Únicamente el peso", "Solamente el instrumental disponible"], 1], ["¿Cómo actúan los anestésicos locales?", ["Aumentan permanentemente la sensibilidad", "Impiden temporalmente la conducción del impulso eléctrico", "Producen siempre pérdida de conciencia", "Bloquean definitivamente los nervios"], 1], ["¿Cuál de estos anestésicos tiene duración breve?", ["Bupivacaína", "Lidocaína", "Novocaína", "Todos tienen la misma duración"], 2], ["¿Cuál presenta duración prolongada?", ["Novocaína", "Lidocaína", "Bupivacaína", "Ninguna"], 2], ["¿Qué efecto produce la adrenalina cuando se agrega a un anestésico local?", ["Vasodilatación y menor duración", "Vasoconstricción y mayor duración", "Aumenta el sangrado", "Anula el efecto anestésico"], 1], ["¿Por qué la adrenalina prolonga el efecto anestésico?", ["Aumenta el flujo sanguíneo", "Reduce el flujo sanguíneo y ralentiza la absorción", "Destruye el anestésico", "Aumenta la eliminación renal"], 1], ["¿En cuál de estas zonas debe evitarse la aplicación de adrenalina según el resumen?", ["Abdomen", "Espalda", "Dedos", "Muslo"], 2], ["¿Qué color predomina en los envases de anestésicos SIN epinefrina?", ["Rojo", "Azul", "Verde", "Amarillo"], 1], ["¿Qué color predomina en los envases de anestésicos CON epinefrina?", ["Azul", "Blanco", "Rojo", "Verde"], 2], ["¿Cuál es la dosis máxima indicada para lidocaína sin adrenalina?", ["2 mg/kg", "3-4 mg/kg", "6-7 mg/kg", "8-10 mg/kg"], 1], ["¿Cuál es la dosis indicada para bupivacaína con adrenalina?", ["2 mg/kg", "2,5 mg/kg", "3-4 mg/kg", "6-7 mg/kg"], 1], ["¿Qué materiales se utilizan para anestesia local infiltrativa?", ["Jeringas de 10 y 20 ml, agujas 25/8, 40/8 y 50/8 y gasas chicas", "Jeringas de 5 ml y agujas 15/5 exclusivamente", "Agujas de Veress y trocares", "Catéteres y sondas"], 0], ["Para obtener 40 ml de anestésico al 1% a partir de una solución al 2%, ¿qué se debe agregar?", ["10 ml de fisiológica", "20 ml de fisiológica", "30 ml de fisiológica", "40 ml de adrenalina"], 1], ["Para obtener 80 ml al 0,5% a partir de 40 ml al 1%, ¿qué se agrega?", ["20 ml de fisiológica", "40 ml de fisiológica", "80 ml de fisiológica", "40 ml de adrenalina"], 1], ["Si la solución anestésica es al 2%, ¿cuántos ml de solución de adrenalina se agregan según el resumen?", ["1 ml", "2 ml", "4 ml", "10 ml"], 0], ["¿Qué debe hacer la IQ circulante con la etiqueta del medicamento?", ["Leerla en silencio", "Leerla en voz alta", "Retirarla antes de abrir", "Desecharla sin verificar"], 1], ["¿Qué elemento pertenece al set de visualización e iluminación laparoscópica?", ["Aguja de Veress", "Insuflador de CO2", "Cable de fibra óptica", "Trocar"], 2], ["¿Cuál es la función de la fuente de luz fría?", ["Insuflar el abdomen", "Proporcionar iluminación al campo quirúrgico", "Aspirar líquidos", "Realizar cortes"], 1], ["¿Qué elementos forman parte del set para insuflar al paciente?", ["Óptica, cámara y fibra óptica", "Insuflador de CO2, aguja de Veress y manguera siliconada", "Trocares, hook y tijera", "Cámara, aspirador y pinza"], 1], ["¿Qué gas se utiliza para insuflar la cavidad abdominal?", ["Oxígeno", "Nitrógeno", "CO2", "Aire ambiental"], 2], ["¿Qué efecto produce el neumoperitoneo?", ["Aproxima los órganos a la pared abdominal", "Eleva la pared abdominal y separa los órganos", "Disminuye la visualización", "Colapsa la cavidad abdominal"], 1], ["¿Cuál es la función del trocar?", ["Iluminar la cavidad", "Guiar el instrumental y evitar la salida del CO2", "Insuflar directamente sin manguera", "Medir la presión arterial"], 1], ["¿A qué elemento se conecta el Hook?", ["Fuente de luz fría", "Electrobisturí monopolar", "Insuflador", "Cámara"], 1], ["¿Qué es una herida?", ["Una alteración de la sensibilidad", "Una lesión con pérdida de continuidad del tegumento", "Una inflamación sin ruptura", "Una infección exclusivamente"], 1], ["¿Qué caracteriza a una herida cerrada?", ["Separación visible de tejidos blandos", "No se observa separación de tejidos y puede producir hematoma", "Siempre presenta bordes lineales", "Siempre requiere drenaje"], 1], ["¿Qué caracteriza a una herida punzante?", ["Es producida por objetos puntiagudos y puede perforar vísceras", "Tiene bordes limpios y lineales", "Es producida exclusivamente por golpes", "Es siempre superficial"], 0], ["¿Cuál es el orden correcto de limpieza de una herida durante una curación?", ["De afuera hacia adentro", "De adentro hacia afuera", "En movimientos circulares sin orden", "De abajo hacia arriba"], 1], ["¿Cuál de las siguientes es una alteración de la cicatrización?", ["Epitelización", "Isquemia", "Coagulación", "Irrigación normal"], 1]];
+const letters = ["A","B","C","D"];
+let page=0, answers={}, submitted=false;
+const quiz=document.getElementById("quiz");
+const counter=document.getElementById("counter"),bar=document.getElementById("bar");
+const blockLabel=document.getElementById("blockLabel"),blockTitle=document.getElementById("blockTitle");
+const prev=document.getElementById("prev"),next=document.getElementById("next"),submit=document.getElementById("submit");
+function render(){
+ const start=page*10, end=Math.min(start+10,50);
+ blockLabel.textContent=`Bloque ${page+1} de 5`;blockTitle.textContent=`Preguntas ${start+1}–${end}`;
+ quiz.innerHTML="";
+ questions.slice(start,end).forEach((q,k)=>{
+  const i=start+k, section=document.createElement("section");section.className="question";
+  const title=document.createElement("p");title.className="qtitle";title.textContent=`${i+1}. ${q[0]}`;section.append(title);
+  q[1].forEach((opt,j)=>{
+   const label=document.createElement("label");label.className="option";
+   const radio=document.createElement("input");radio.type="radio";radio.name=`q${i}`;radio.value=j;
+   radio.checked=answers[i]===j;radio.disabled=submitted;
+   radio.addEventListener("change",()=>{answers[i]=j;updateProgress();});
+   const span=document.createElement("span");span.textContent=`${letters[j]}) ${opt}`;
+   label.append(radio,span);section.append(label);
+  });
+  if(submitted){const fb=document.createElement("div");fb.className="feedback "+(answers[i]===q[2]?"correct":"wrong");fb.textContent=answers[i]===q[2]?"Correcta":`Incorrecta · Respuesta correcta: ${letters[q[2]]}`;section.append(fb);}
+  quiz.append(section);
+ });
+ prev.disabled=page===0;next.style.display=page===4?"none":"inline-block";submit.style.display=page===4?"inline-block":"none";
+ submit.disabled=Object.keys(answers).length!==50||submitted;
+ if(submitted){next.style.display="none";submit.style.display="none";}
+ updateProgress();
+}
+function updateProgress(){const n=Object.keys(answers).length;counter.textContent=`${n}/50 respondidas`;bar.style.width=`${n*2}%`;submit.disabled=n!==50||submitted;}
+prev.addEventListener("click",()=>{page--;render();window.scrollTo({top:0,behavior:"smooth"});});
+next.addEventListener("click",()=>{page++;render();window.scrollTo({top:0,behavior:"smooth"});});
+submit.addEventListener("click",()=>{
+ if(Object.keys(answers).length!==50)return;
+ submitted=true;const score=questions.reduce((s,q,i)=>s+(answers[i]===q[2]?1:0),0);
+ render();const result=document.getElementById("result");result.style.display="block";
+ result.innerHTML=`<h2>Resultado: ${score}/50</h2><strong>${Math.round(score/50*100)}%</strong><p>${score>=40?"¡Muy buen resultado!":score>=30?"Buen trabajo. Revisá los temas de las preguntas incorrectas.":"A repasar esos temas: los errores sirven para detectar qué falta reforzar."}</p><button type="button" class="secondary" id="retry">Volver a intentar</button>`;
+ document.getElementById("retry").addEventListener("click",()=>{page=0;answers={};submitted=false;result.style.display="none";render();window.scrollTo({top:0,behavior:"smooth"});});
+ result.scrollIntoView({behavior:"smooth",block:"center"});
+});
+render();
+</script>
+</body></html>
